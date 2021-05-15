@@ -1,0 +1,19 @@
+version: '3.7'
+
+
+services:
+  dhcp:
+    image: networkboot/dhcpd
+    command: enp2s0
+    restart: always
+    container_name: dhcp
+    volumes:
+    - ./data:/data
+    network_mode: "host"
+
+
+
+networks:
+  hostnet:
+    external: true
+    name: host

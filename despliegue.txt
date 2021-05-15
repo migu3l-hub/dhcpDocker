@@ -1,0 +1,17 @@
+docker run -it --rm --init --net host -v "$(pwd)/data":/data networkboot/dhcpd eth0
+
+
+Activar el forwardeo de puertos
+Este es probablemente el metodo más usado, pero el cambio es temporal, y deberás realizarlo luego de cada que reinicies el servidor.
+
+ echo 1 > /proc/sys/net/ipv4/ip_forward
+
+Activar iptables
+iptables -t nat -A POSTROUTING -s 192.168.16.0/24 -o enp2s0 -j SNAT --to 192.168.1.72
+iptables -t nat -A POSTROUTING -s 192.168.16.0/24 -o enx0000000035ec -j MASQUERADE
+
+iptables -t nat -A PREROUTING -i enx0000000035ec -p tcp --dport 80 -j REDIRECT --to-port 3128
+
+iptables -t nat -A PREROUTING -p tcp -s 192.168.16.0/24 --dport 80 -j REDIRECT --to-port 3128
+
+iptables -t nat -A PREROUTING -p tcp -s 192.168.16.0/24 --dport 443 -j REDIRECT --to-port 3129
